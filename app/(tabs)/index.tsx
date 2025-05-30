@@ -8,12 +8,9 @@ import {
   SafeAreaView,
   StatusBar,
   ActivityIndicator,
-  Animated,
-  // Dimensions,
+  Animated
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-// const { width } = Dimensions.get('window');
 
 // Mock ML sentiment analysis function
 // In a real app, you'd integrate with TensorFlow.js or call an API
