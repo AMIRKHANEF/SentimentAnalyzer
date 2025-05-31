@@ -11,7 +11,7 @@ import {
   StatusBar
 } from 'react-native';
 import { launchImageLibrary, ImagePickerResponse, MediaType } from 'react-native-image-picker';
-import { TensorImage, torch, torchvision } from 'react-native-pytorch-core';
+import { torch, torchvision, ImageUtil } from 'react-native-pytorch-core';
 
 const MODEL_PATH = 'sentiment_model_mobile_optimized.ptl';
 const IMAGE_SIZE = 224;
@@ -60,20 +60,20 @@ export default function ImageSentiment({ onResult }: ImageSentimentProps) {
   }, [model]);
 
   const preprocessImage = useCallback(async (uri: string) => {
-    try {
-      const tensorImage = await TensorImage.fromImage(uri);
-      const resized = torchvision.transforms.resize(tensorImage, [IMAGE_SIZE, IMAGE_SIZE]);
-      const normalized = torchvision.transforms.normalize(
-        resized, 
-        NORMALIZATION_MEAN, 
-        NORMALIZATION_STD
-      );
-      return normalized;
-    } catch (error) {
-      console.error('Image preprocessing failed:', error);
-      throw new Error('Failed to process the image');
-    }
-  }, []);
+  try {
+    const tensorImage = await ImageUtil.fromFile(uri);
+    const resized = torchvision.transforms.resize(tensorImage, [IMAGE_SIZE, IMAGE_SIZE]);
+    const normalized = torchvision.transforms.normalize(
+      resized,
+      NORMALIZATION_MEAN,
+      NORMALIZATION_STD
+    );
+    return normalized;
+  } catch (error) {
+    console.error('Image preprocessing failed:', error);
+    throw new Error('Failed to process the image');
+  }
+}, []);
 
   const runInference = useCallback(async (preprocessedImage: any, modelInstance: any) => {
     try {
